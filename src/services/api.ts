@@ -1,5 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL
 
+const ROTAS_SEM_REDIRECT = ['/auth/login', '/auth/me']
+
 export class ApiError extends Error {
   status: number
 
@@ -40,6 +42,10 @@ export async function api<T>(
   const dados = lerJson(await resposta.text())
 
   if (!resposta.ok) {
+    if (resposta.status === 401 && !ROTAS_SEM_REDIRECT.includes(caminho)) {
+      window.location.assign('/login?expirada=1')
+    }
+
     const { message } = (dados ?? {}) as ErroDoNest
     const texto = Array.isArray(message) ? message.join(' ') : message
     throw new ApiError(texto ?? 'Algo deu errado. Tente de novo.', resposta.status)

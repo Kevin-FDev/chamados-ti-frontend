@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
+import Alert from '../components/Alert'
+import Button from '../components/Button'
+import Card from '../components/Card'
 import StatusBadge from '../components/StatusBadge'
 import { useAuth } from '../contexts/AuthContext'
 import { ApiError } from '../services/api'
 import { chamadoService } from '../services/chamadoService'
 import type { Chamado, StatusChamado } from '../types'
+
+const botaoEditar =
+  'inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2'
 
 export default function DetalheChamado() {
   const { id } = useParams()
@@ -71,22 +77,18 @@ export default function DetalheChamado() {
         ← Voltar para a lista
       </Link>
 
-      {carregando && <p className="text-slate-600">Carregando chamado...</p>}
+      {aviso && <Alert tipo="sucesso">{aviso}</Alert>}
+      {erro && <Alert tipo="erro">{erro}</Alert>}
 
-      {aviso && (
-        <p role="status" className="rounded bg-green-50 p-3 text-sm text-green-700">
-          {aviso}
-        </p>
-      )}
-
-      {erro && (
-        <p role="alert" className="rounded bg-red-50 p-3 text-sm text-red-700">
-          {erro}
-        </p>
+      {carregando && (
+        <div
+          className="h-48 animate-pulse rounded-2xl bg-slate-200"
+          aria-busy="true"
+        />
       )}
 
       {chamado && (
-        <article className="space-y-3 rounded-xl bg-white p-6 shadow">
+        <Card className="space-y-4">
           <div className="flex items-start justify-between gap-3">
             <h1 className="text-2xl font-bold text-slate-800">
               {chamado.titulo}
@@ -94,7 +96,7 @@ export default function DetalheChamado() {
             <StatusBadge status={chamado.status} />
           </div>
 
-          <p className="text-slate-700">
+          <p className="whitespace-pre-line text-slate-700">
             {chamado.descricao ?? 'Sem descrição.'}
           </p>
 
@@ -105,12 +107,12 @@ export default function DetalheChamado() {
 
           {usuario?.papel === 'ADMIN' && (
             <label className="block text-sm font-medium text-slate-700">
-              Status (somente admin)
+              Status (somente administrador)
               <select
                 value={chamado.status}
                 onChange={(e) => mudarStatus(e.target.value as StatusChamado)}
                 disabled={salvandoStatus}
-                className="mt-1 block rounded border border-slate-300 p-2 disabled:opacity-60"
+                className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-60 sm:w-64"
               >
                 <option value="ABERTO">Aberto</option>
                 <option value="EM_ANDAMENTO">Em andamento</option>
@@ -119,22 +121,15 @@ export default function DetalheChamado() {
             </label>
           )}
 
-          <div className="flex items-center gap-3 pt-2">
-            <Link
-              to={`/chamados/${chamado.id}/editar`}
-              className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-            >
+          <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
+            <Link to={`/chamados/${chamado.id}/editar`} className={botaoEditar}>
               Editar
             </Link>
-            <button
-              onClick={apagar}
-              disabled={apagando}
-              className="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60"
-            >
+            <Button variante="perigo" onClick={apagar} disabled={apagando}>
               {apagando ? 'Apagando...' : 'Apagar'}
-            </button>
+            </Button>
           </div>
-        </article>
+        </Card>
       )}
     </section>
   )

@@ -1,5 +1,9 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type SyntheticEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
+import Alert from '../components/Alert'
+import Button from '../components/Button'
+import Card from '../components/Card'
+import Input from '../components/Input'
 import { ApiError } from '../services/api'
 import { usuarioService } from '../services/usuarioService'
 
@@ -12,7 +16,7 @@ export default function Cadastro() {
   const [erro, setErro] = useState('')
   const [enviando, setEnviando] = useState(false)
 
-  async function enviar(evento: FormEvent) {
+  async function enviar(evento: SyntheticEvent) {
     evento.preventDefault()
     setErro('')
     setEnviando(true)
@@ -30,68 +34,57 @@ export default function Cadastro() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-      <form
-        onSubmit={enviar}
-        className="w-full max-w-sm space-y-4 rounded-xl bg-white p-6 shadow"
-      >
-        <h1 className="text-2xl font-bold text-slate-800">Criar conta</h1>
-
-        {erro && (
-          <p role="alert" className="rounded bg-red-50 p-3 text-sm text-red-700">
-            {erro}
+    <main className="flex min-h-screen items-center justify-center p-4">
+      <div className="w-full max-w-sm space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-brand-600">Criar conta</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Cadastre-se para abrir chamados de TI
           </p>
-        )}
+        </div>
 
-        <label className="block text-sm font-medium text-slate-700">
-          Nome
-          <input
-            type="text"
-            required
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 p-2"
-          />
-        </label>
+        <Card>
+          <form onSubmit={enviar} className="space-y-4">
+            {erro && <Alert tipo="erro">{erro}</Alert>}
 
-        <label className="block text-sm font-medium text-slate-700">
-          E-mail
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 p-2"
-          />
-        </label>
+            <Input
+              rotulo="Nome"
+              type="text"
+              required
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+            />
 
-        <label className="block text-sm font-medium text-slate-700">
-          Senha (mínimo 6 caracteres)
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 p-2"
-          />
-        </label>
+            <Input
+              rotulo="E-mail"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-        <button
-          type="submit"
-          disabled={enviando}
-          className="w-full rounded bg-blue-600 p-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
-        >
-          {enviando ? 'Criando...' : 'Criar conta'}
-        </button>
+            <Input
+              rotulo="Senha (mínimo 6 caracteres)"
+              type="password"
+              required
+              minLength={6}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+            />
+
+            <Button type="submit" disabled={enviando} className="w-full">
+              {enviando ? 'Criando...' : 'Criar conta'}
+            </Button>
+          </form>
+        </Card>
 
         <p className="text-center text-sm text-slate-600">
           Já tem conta?{' '}
-          <Link to="/login" className="font-semibold text-blue-600 hover:underline">
+          <Link to="/login" className="font-semibold text-brand-600 hover:underline">
             Entrar
           </Link>
         </p>
-      </form>
+      </div>
     </main>
   )
 }

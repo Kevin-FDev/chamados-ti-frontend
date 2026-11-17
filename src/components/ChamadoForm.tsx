@@ -2,6 +2,10 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
 import { ApiError } from '../services/api'
 import type { DadosChamado } from '../services/chamadoService'
+import Alert from './Alert'
+import Button from './Button'
+import Card from './Card'
+import Input from './Input'
 
 type Props = {
   inicial?: DadosChamado
@@ -39,50 +43,41 @@ export default function ChamadoForm({
   }
 
   return (
-    <form onSubmit={enviar} className="space-y-4 rounded-xl bg-white p-6 shadow">
-      {erro && (
-        <p role="alert" className="rounded bg-red-50 p-3 text-sm text-red-700">
-          {erro}
-        </p>
-      )}
+    <Card>
+      <form onSubmit={enviar} className="space-y-4">
+        {erro && <Alert tipo="erro">{erro}</Alert>}
 
-      <label className="block text-sm font-medium text-slate-700">
-        Título (3 a 100 caracteres)
-        <input
+        <Input
+          rotulo="Título (3 a 100 caracteres)"
           type="text"
           required
           minLength={3}
           maxLength={100}
           value={titulo}
           onChange={(e) => setTitulo(e.target.value)}
-          className="mt-1 w-full rounded border border-slate-300 p-2"
         />
-      </label>
 
-      <label className="block text-sm font-medium text-slate-700">
-        Descrição (opcional, até 250 caracteres)
-        <textarea
-          rows={4}
-          maxLength={250}
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-          className="mt-1 w-full rounded border border-slate-300 p-2"
-        />
-        <span className="text-xs text-slate-500">{descricao.length}/250</span>
-      </label>
+        <label className="block text-sm font-medium text-slate-700">
+          Descrição (opcional, até 250 caracteres)
+          <textarea
+            rows={4}
+            maxLength={250}
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+            className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+          />
+          <span className="text-xs text-slate-500">{descricao.length}/250</span>
+        </label>
 
-      <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={enviando}
-          className="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
-        >
-          {enviando ? textoEnviando : textoBotao}
-        </button>
-        <Link to="/" className="text-sm text-slate-600 hover:underline">
-          Cancelar
-        </Link>
-      </div>
-    </form>
+        <div className="flex items-center gap-3">
+          <Button type="submit" disabled={enviando}>
+            {enviando ? textoEnviando : textoBotao}
+          </Button>
+          <Link to="/" className="text-sm text-slate-600 hover:underline">
+            Cancelar
+          </Link>
+        </div>
+      </form>
+    </Card>
   )
 }
